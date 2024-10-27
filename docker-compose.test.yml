@@ -1,0 +1,26 @@
+networks:
+  localnet:
+    name: testnet
+    external: true
+
+services:
+  codinglab:
+    container_name: codinglab
+    image: codinglab:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile.prod
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    env_file: .env.ui
+    networks:
+      - localnet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.codinglab.rule=Host(`codinglab.localhost`)"
+      - "traefik.http.routers.codinglab.entrypoints=web"
+      - "traefik.http.routers.codinglab.service=codinglab"
+      - "traefik.http.services.codinglab.loadbalancer.server.port=3000"
+      - "traefik.http.services.codinglab.loadbalancer.healthcheck.path=/"
+      - "traefik.http.services.codinglab.loadbalancer.healthcheck.interval=60s"
+      - "traefik.http.services.codinglab.loadbalancer.healthcheck.timeout=3s"
