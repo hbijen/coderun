@@ -10,11 +10,9 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile
-RUN yarn add sharp@0.32.6
-# RUN npm config set fetch-retry-maxtimeout 600000 -g && npm install --force --only=production
-# RUN npm i sharp@0.32.6
+COPY package.json package-lock.json ./
+RUN npm config set fetch-retry-maxtimeout 600000 -g && npm install --force --only=production
+RUN npm i sharp@0.32.6
 
 # =====================================================================================
 # Rebuild the source code only when needed
