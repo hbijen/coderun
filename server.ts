@@ -29,8 +29,6 @@ app.prepare().then(() => {
 
         const io = new Server(httpServer, { path: "/api/websocket" });
 
-        console.log(io)
-
         io.on("connection", (socket: any) => {
             console.log("new ws submission")
             initNewSubmission(socket)

@@ -65,6 +65,11 @@ export default function CodeSubmit() {
     function updateCode(value: string) {
         setCode(value)
     }
+
+    function appendToResult(message: string) {
+        setExecuteResult((prev) => [...prev, message])
+    }
+
     function updateResult(result: string) {
         console.log("result:", result)
         const resultObj = JSON.parse(result)
@@ -74,27 +79,30 @@ export default function CodeSubmit() {
             case 'stage':
                 // indicate running
                 if (resultObj.stage == 'compile') {
-                    setExecuteResult((prev) => [...prev, 'Compiling...'])
+                    appendToResult('Compiling...')
                 } else if (resultObj.stage == 'run') {
-                    setExecuteResult((prev) => [...prev, 'Running...'])
+                    appendToResult('Running...')
                 }
                 break;
             case 'data':
                 // append data to results
-                setExecuteResult((prev) => [...prev, resultObj.data])
+                appendToResult(resultObj.data)
                 break;
             case 'exit':
                 if (resultObj.stage == 'compile') {
                     if(resultObj.code) {
-                        setExecuteResult((prev) => [...prev, 'Compilation Failed'])
+                        appendToResult('Compilation Failed')
                     } else {
-                        setExecuteResult((prev) => [...prev, 'Compilation Successful'])
+                        appendToResult('Compilation Successful')
                     }
                 } else if (resultObj.stage == 'run') {
                     console.log("why clientId ", clientId)
                     socket.emit("codelab:completed", JSON.stringify({ clientId: clientId }));
                 }
                 break;
+            default:
+                appendToResult(resultObj.message)
+
         }
     }
     function handleError(error: string) {
