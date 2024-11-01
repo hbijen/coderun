@@ -16,7 +16,7 @@ export default function SignIn() {
                 <CardHeader>
                     <CardTitle className="text-2xl">Login</CardTitle>
                     <CardDescription>
-                        Use your NEILIT Account to Login
+                        Use your NEILIT, Manipur Account to Login
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -29,7 +29,7 @@ export default function SignIn() {
                             await signIn("keycloak", { redirectTo: "/lab" })
                         }}
                     >
-                        <Button type="submit" className="w-full">NEILIT Login</Button>
+                        <Button type="submit" className="w-full">Login</Button>
                     </form>
 
                 </CardContent>

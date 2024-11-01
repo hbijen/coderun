@@ -1,14 +1,22 @@
-import { signOut } from "@/auth"
+import { auth, signOut } from "@/auth"
+import { Button } from "./ui/button"
 
-export function SignOut() {
+export async function SignOut() {
+  
+  const session = await auth()
+
+  console.log('session ', session)
+
   return (
     <form
       action={async () => {
         "use server"
-        await signOut()
+        const result = await signOut()
       }}
     >
-      <button type="submit">Sign Out</button>
+      <span className="pr-4">{session?.user?.email}</span>
+      
+      <Button type="submit">Sign Out</Button>
     </form>
   )
 }
