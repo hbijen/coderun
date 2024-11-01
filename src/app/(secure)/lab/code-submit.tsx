@@ -12,26 +12,36 @@ import {
 import { SampleCodes } from "@/lib/data";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PistonRequest } from "@/lib/interface";
-import { SubmissionState, useSubmissionStore } from "@/store/submission";
+import { useAvailableRuntimesStore, useQuestionStore, useSampleQuestionStore } from "@/store/question";
 import { useEffect, useState } from "react";
-import { socket } from "../socket";
+import { socket } from "../../socket";
 
 export default function CodeSubmit() {
-    const languageid = useSubmissionStore((state: SubmissionState) => state.languageid)
-    const sample = useSubmissionStore((state: SubmissionState) => state.sample)
-    const [code, setCode] = useState<string>(sample.code)
+    const [code, setCode] = useState<string>('')
     const [executeResult, setExecuteResult] = useState<string[]>([])
+
+    const availableRuntimes = useAvailableRuntimesStore()
+    const sample = useSampleQuestionStore(state => state.sample)
+    const selectedRuntime = useQuestionStore(state => state.selectedRuntime)
 
     const clientId = "X12345"
 
+    // fetch available runtime
+    useEffect(() => {
+        fetch('/api/runtimes').then(async r => {
+            const result = await r.json()
+            availableRuntimes.setRuntimes(result.data)
+        })
+    }, [])
+
+
     useEffect(() => {
         setExecuteResult([])
-        setCode(sample?.code || "")
-    }, [languageid])
+        setCode(sample.code || "")
+    }, [sample])
 
     useEffect(() => {
         if (socket.connected) {
@@ -111,16 +121,18 @@ export default function CodeSubmit() {
 
     async function submitCode() {
         setExecuteResult([])
-        const codeRequest: PistonRequest = {
-            language: languageid,
-            version: sample.version,
-            files: [
-                {
-                    content: code as string
-                }
-            ]
+        if (selectedRuntime) {
+            const codeRequest: PistonRequest = {
+                language: selectedRuntime.language,
+                version: selectedRuntime.version,
+                files: [
+                    {
+                        content: code as string
+                    }
+                ]
+            }
+            socket.emit("codelab:submit", JSON.stringify({ clientId: clientId, ...codeRequest }));
         }
-        socket.emit("codelab:submit", JSON.stringify({ clientId: clientId, ...codeRequest }));
     }
 
     return (
@@ -133,14 +145,13 @@ export default function CodeSubmit() {
                     <SelectLanguage></SelectLanguage>
                 </div>
             </div>
-            <Input type="hidden" name="version" value={sample.version}></Input>
             <Textarea className="grow"
                 placeholder="Code Here!"
                 name="code" value={code}
                 onChange={(e) => updateCode(e.target.value)}
             />
             <div className="self-center space-x-2">
-                <Button onClick={submitCode}>Submit</Button>
+                <Button onClick={submitCode}>Run</Button>
             </div>
             <Label className="text-lg">Output</Label>
             <div className="grow rounded-md border bg-muted p-4">
@@ -157,19 +168,25 @@ export default function CodeSubmit() {
 
 
 function SelectLanguage() {
-    const languageid = useSubmissionStore((state: SubmissionState) => state.languageid)
+    const [language, setLanguage] = useState<string>("")
+    const runtimes = useQuestionStore(state => state.runtimes)
+    const setSelectedRuntime = useQuestionStore(state => state.setSelectedRuntime)
+
+    function selectedLanguage(value: string) {
+        setLanguage(value)
+        setSelectedRuntime( JSON.parse(value) )
+    }    
     return (
-        <Select name="language" value={languageid}>
+        <Select name="language" value={language} onValueChange={selectedLanguage}>
             <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a Language" />
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>
                     <SelectLabel>Language</SelectLabel>
-                    <SelectItem value="c">C</SelectItem>
-                    <SelectItem value="java">Java</SelectItem>
-                    <SelectItem value="python">Python (3.12.0)</SelectItem>
-                    <SelectItem value="javascript">JavaScript</SelectItem>
+                    {
+                    runtimes.map(d => <SelectItem key={`${d.language}${d.version}`} value={JSON.stringify(d)}>{d.language} ({d.version})</SelectItem> )
+                    }
                 </SelectGroup>
             </SelectContent>
         </Select>
@@ -177,24 +194,33 @@ function SelectLanguage() {
 }
 
 function SelectSample() {
-    const store = useSubmissionStore()
+    const [sample, setSample] = useState<string>("")
+    const setQuestion = useQuestionStore(state => state.setQuestion)
+    const setRuntimes = useQuestionStore(state => state.setRuntimes)
+    const availableRuntimes = useAvailableRuntimesStore((state) => state.runtimes)
+    
 
     function sampleSelected(value: string) {
-        store.setLanguage(value)
-        store.setSample(SampleCodes[value])
+        setSample(value)
+        const found = SampleCodes.find(d => d.language == value)
+        if (found) {
+            setQuestion(found.question)
+            setRuntimes(availableRuntimes)
+            useSampleQuestionStore.setState({sample: found})
+        }
     }
 
     return (
-        <Select onValueChange={sampleSelected}>
+        <Select value={sample} onValueChange={sampleSelected}>
             <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a Sample" />
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>
                     <SelectLabel>Select a Sample</SelectLabel>
-                    <SelectItem value="c">C</SelectItem>
-                    <SelectItem value="java">Java</SelectItem>
-                    <SelectItem value="javascript">JavaScript</SelectItem>
+                    {
+                    SampleCodes.map(d => <SelectItem key={d.language} value={d.language}>{d.language}</SelectItem> )
+                    }                    
                 </SelectGroup>
             </SelectContent>
         </Select>

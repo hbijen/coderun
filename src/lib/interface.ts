@@ -9,3 +9,10 @@ export type PistonRequest = {
     "compile_memory_limit"?: number,
     "run_memory_limit"?: number
 }
+
+export type CodeRuntime = {
+    language: string
+    version: string
+    aliases?: string[]
+    runtime?: string
+}

@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client"
+import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -13,10 +14,10 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "codinglab",
-  description: "Try out coding challenges",
-};
+// export const metadata: Metadata = {
+//   title: "codinglab",
+//   description: "Try out coding challenges",
+// };
 
 export default function RootLayout({
   children,
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <SessionProvider>
         {children}
+        </SessionProvider>
       </body>
     </html>
   );

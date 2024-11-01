@@ -1,16 +1,7 @@
-export type SampleTemplate = {
-    question: string,
-    code: string,
-    version: string,
-}
-export const SampleCodes: {[key: string]: SampleTemplate} = {
-    "empty": {
-        "version": "",
-        "question": "",
-        "code": ""
-    },
-    "c": {
-        "version": "10.2.0",
+
+export const SampleCodes: { language: string, code: string, question: string }[] = [
+    {
+        language: "c",
         "question": "Write a program that prints 'Hello, World!' ",
         "code": `
 #include <stdio.h>
@@ -21,8 +12,8 @@ int main() {
 }
 `
     },
-    "java": {
-        "version": "15.0.2",
+    {
+        language: "java",
         "question": "Write a program that prints 'Hello, World!' ",
         "code": `
 public class HelloWorld {
@@ -32,8 +23,8 @@ public class HelloWorld {
 }
 `
     },
-    "javascript": {
-        "version": "20.11.1",
+    {
+        language: "javascript",
         "question": "Write a function in javascript that returns the sum of 2 numbers",
         "code": `
 function addNumbers(num1, num2) {
@@ -44,4 +35,4 @@ console.log( addNumbers(2,3) )
 `
 
     }
-}
+]
