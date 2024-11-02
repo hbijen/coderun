@@ -5,8 +5,6 @@ export async function SignOut() {
   
   const session = await auth()
 
-  console.log('session ', session)
-
   return (
     <form
       action={async () => {

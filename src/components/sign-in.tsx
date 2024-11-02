@@ -13,16 +13,20 @@ export default function SignIn() {
     return (
         <div className="flex items-center justify-center h-screen">
             <Card className="w-96">
+
                 <CardHeader>
-                    <CardTitle className="text-2xl">Login</CardTitle>
+                    <CardTitle>
+                        <div className="flex items-end p-6 pl-0 border-b">
+                            <Image src="/NIELIT-Logo.png" alt="Logo" width={200} height={100} />
+                            <span className="pl-2">Manipur</span>
+                        </div>
+                        <div className="text-2xl pt-4">Login</div>
+                    </CardTitle>
                     <CardDescription>
-                        Use your NEILIT, Manipur Account to Login
+                        Use your NEILIT Account to Login
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-center">
-                        <Image src="/NIELIT-Logo.png" alt="Logo" width={200} height={100} className="mx-auto p-6" />
-                    </div>
                     <form
                         action={async () => {
                             "use server"

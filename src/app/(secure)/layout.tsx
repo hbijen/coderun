@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { SignOut } from "@/components/sign-out";
+import { isCodeLabUser } from "@/lib/auth";
 import { History, Settings } from "lucide-react";
 import { redirect } from "next/navigation";
 import Home from "../page";
@@ -27,10 +28,15 @@ export default async function SecurePage({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await auth()
 
+    const session = await auth()
     if (!session?.user) {
         redirect('/public/login');
+    }
+    const isUser = await isCodeLabUser()
+    console.log("isUser? ", isUser)
+    if (!isUser) {
+        redirect('/public/noaccess');
     }
 
     return (
