@@ -9,7 +9,7 @@ export async function SignOut() {
     <form
       action={async () => {
         "use server"
-        const result = await signOut()
+        await signOut()
       }}
     >
       <span className="pr-4">{session?.user?.email}</span>

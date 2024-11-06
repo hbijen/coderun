@@ -34,7 +34,7 @@ export const useAvailableRuntimesStore = create<AvailableRuntimes>()((set) => ({
 }))
 
 // TODO: for initial demo only, the actual questions should be added in the database
-export const useSampleQuestionStore = create<{sample: any}>()((set) => ({
+export const useSampleQuestionStore = create<{sample: {code?: string}}>()(() => ({
     sample: {},
 }))
 

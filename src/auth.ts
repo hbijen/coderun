@@ -2,7 +2,6 @@ import NextAuth, { Account, Profile, Session, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";
 import Keycloak from "next-auth/providers/keycloak";
-import { NextRequest } from "next/server";
 
 import { decode, JwtPayload } from "jsonwebtoken";
 
@@ -63,21 +62,22 @@ function sessionCallback({ session, token }: { session: Session, token: JWT }) {
   return session
 }
 
-function authorized({ request, auth }: { request: NextRequest; auth: Session | null; }) {
+// function authorized({ request, auth }: { request: NextRequest; auth: Session | null; }) {
 
-  if (!auth) {
-    return true
-  }
-  console.log("authorized 2? ", auth)
+//   if (!auth) {
+//     return true
+//   }
+//   console.log("authorized 2? ", auth)
 
-  return true
-}
+//   return true
+// }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function nestedValue(obj: { [key: string]: any }, keys: string[]) {
   return keys.reduce((acc, key) => acc?.[key], obj) ?? null;
 }
 
-function jwt({ account, profile, ...params }: { token: JWT; user: User | AdapterUser; account: Account | null; profile?: Profile | undefined; trigger?: "signIn" | "signUp" | "update" | undefined; isNewUser?: boolean | undefined; session?: any; }) {
+function jwt({ account, profile, ...params }: { token: JWT; user: User | AdapterUser; account: Account | null; profile?: Profile | undefined }) {
   const jwt: JWT = {}
 
   if (account) {

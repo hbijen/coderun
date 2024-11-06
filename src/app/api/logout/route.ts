@@ -1,8 +1,8 @@
 
 import { auth, signOut } from "@/auth";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
 
   const session = await auth()
   console.log('session ', session)
@@ -29,8 +29,4 @@ export async function GET(req: NextRequest, res: NextResponse) {
           'Content-Type': 'text/html', // Set content type for HTML
       },
   });
-  // console.log("ssoOut: ", ssoOut)
-
-  
-  // return NextResponse.json({ ok: true })
 }

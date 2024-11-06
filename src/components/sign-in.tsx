@@ -17,13 +17,12 @@ export default function SignIn() {
                 <CardHeader>
                     <CardTitle>
                         <div className="flex items-end p-6 pl-0 border-b">
-                            <Image src="/NIELIT-Logo.png" alt="Logo" width={200} height={100} />
-                            <span className="pl-2">Manipur</span>
+                            <Image src="https://lamzing.com/logo-with-name.svg" alt="Logo" width={200} height={100} />
                         </div>
                         <div className="text-2xl pt-4">Login</div>
                     </CardTitle>
                     <CardDescription>
-                        Use your NEILIT Account to Login
+                        Use your Lamzing Account to Login
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

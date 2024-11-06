@@ -1,27 +1,7 @@
 import { auth } from "@/auth";
 import { SignOut } from "@/components/sign-out";
 import { isCodeLabUser } from "@/lib/auth";
-import { History, Settings } from "lucide-react";
 import { redirect } from "next/navigation";
-import Home from "../page";
-
-const items = [
-    {
-        title: "Home",
-        url: "/lab",
-        icon: Home,
-    },
-    {
-        title: "History",
-        url: "#",
-        icon: History,
-    },
-    {
-        title: "Settings",
-        url: "#",
-        icon: Settings,
-    },
-]
 
 export default async function SecurePage({
     children,
