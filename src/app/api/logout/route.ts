@@ -2,6 +2,7 @@
 import { auth, signOut } from "@/auth";
 import { NextResponse } from "next/server";
 
+//NOTE: THIS FIlE IS NOT IN USE
 export async function GET() {
 
   const session = await auth()
@@ -10,7 +11,7 @@ export async function GET() {
 
   await signOut({ redirect: false })
 
-   const html = await fetch(`${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/logout?redirect_uri=/`, {
+  const html = await fetch(`${process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/logout`, {
     method: "POST",
     body: JSON.stringify({
       client_id: process.env.AUTH_KEYCLOAK_ID,

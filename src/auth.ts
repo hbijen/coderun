@@ -1,5 +1,5 @@
 import NextAuth, { Account, Profile, Session, User } from "next-auth";
-import { AdapterUser } from "next-auth/adapters";
+import { AdapterSession, AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";
 import Keycloak from "next-auth/providers/keycloak";
 
@@ -28,6 +28,7 @@ declare module 'next-auth/jwt' {
       appRoles?: string[]
     },
     tokens?: {
+      idToken?: string;
       accessToken?: string;
       refreshToken?: string;
       expiresIn?: number;
@@ -39,6 +40,7 @@ declare module 'next-auth/jwt' {
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Keycloak({
     name: "Neilit SSO",
+    issuer: process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER,
     account: (tokens) => {
       console.log("accounts.... ", tokens)
       return tokens
@@ -52,7 +54,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt: jwt,
     session: sessionCallback,
     // authorized: authorized,
-    
+
+  },
+  events: {
+    signOut({ token }: { token?: JWT | null; session?: AdapterSession | null | void }) {
+      console.log("sign out1: ", token)
+      const { idToken } = token!.tokens!
+
+      const data = {
+        id_token_hint: idToken!,
+        client_id: process.env.AUTH_KEYCLOAK_ID!,
+      }
+      const body = new URLSearchParams(data).toString();
+
+      fetch(`${process.env.NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: body
+      }).then(async r => {
+        console.log("sso logout status: ", r.status, r.statusText)
+      }).catch(err => {
+        console.log("err sso", err)
+      })
+    },
   }
 })
 
@@ -101,6 +127,7 @@ function jwt({ account, profile, ...params }: { token: JWT; user: User | Adapter
       }
     }
     jwt.tokens = {
+      idToken: account.id_token,
       accessToken: account.access_token,
       refreshToken: account.refresh_token,
       expiresIn: account.expires_in
